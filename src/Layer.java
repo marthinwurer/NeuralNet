@@ -11,6 +11,7 @@ public class Layer {
     float[][] exec_val;
     float[][] deltas;
     float[] outputs;
+    float[] before_funct;
     float[] inputs;
     float[] error;
     float[] back;
@@ -26,6 +27,7 @@ public class Layer {
         this.exec_val = new float[outsize][insize];
         this.deltas = new float[outsize][insize];
         this.outputs = new float[outsize];
+        this.before_funct = new float[outsize];
         this.inputs = new float[insize];
         this.error = new float[outsize];
         this.back = new float[insize];
@@ -45,10 +47,12 @@ public class Layer {
         }
 
         for (int ii = 0; ii < outsize; ii++){
-            outputs[ii] = bias;
+            before_funct[ii] = bias;
             for (int jj = 0; jj < insize; jj++){
-                outputs[ii] += function.output(inputs[jj] * weights[ii][jj]);
+                before_funct[ii] += (inputs[jj] * weights[ii][jj]);
+
             }
+            outputs[ii] = function.output(before_funct[ii]);
         }
 
         return outputs;
@@ -56,9 +60,15 @@ public class Layer {
 
     public void backpropagate(float[] in, float[] out, float factor){
         evaluate( in );
-        for (int jj = 0; jj < outsize; jj++){
-            error[jj] = (out[jj] - outputs[jj]) * factor;
+        for (int ii = 0; ii < outsize; ii++){
+            error[ii] = (out[ii] - outputs[ii]) * factor;
         }
+
+	    // apply the gradient to the error
+	    for (int ii = 0; ii < outsize; ii++){
+		    error[ii] = error[ii] * function.gradient(before_funct[ii]);
+	    }
+
 
         for (int jj = 0; jj < insize; jj++){
             back[jj] = 0;
