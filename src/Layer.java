@@ -99,16 +99,20 @@ public class Layer {
 
         System.out.println(Arrays.deepToString(l.weights));
 
-        for (int ii = 0; ii < 1000; ii++){
+        for (int ii = 0; ii < 20; ii++){
             for (int jj = 0; jj < in.length; jj++) {
                 l.backpropagate(in[jj], out[jj], 0.1f);
             }
             System.out.println(Arrays.toString(l.error));
             System.out.println(Arrays.toString(l.outputs));
+	        System.out.println(Arrays.toString(l.back));
         }
         for (int jj = 0; jj < in.length; jj++) {
             System.out.println(Arrays.toString(l.evaluate(in[jj])));
         }
+
+	    System.out.println(Arrays.toString(l.back));
+
 
     }
 
