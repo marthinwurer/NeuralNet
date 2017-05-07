@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -13,7 +14,6 @@ public class Layer {
     float[] outputs;
     float[] before_funct;
     float[] inputs;
-    float[] error;
     float[] back;
     float bias;
 
@@ -29,7 +29,6 @@ public class Layer {
         this.outputs = new float[outsize];
         this.before_funct = new float[outsize];
         this.inputs = new float[insize];
-        this.error = new float[outsize];
         this.back = new float[insize];
         this.function = funct;
 
@@ -58,11 +57,11 @@ public class Layer {
         return outputs;
     }
 
-    public void backpropagate(float[] in, float[] out, float factor){
-        evaluate( in );
-        for (int ii = 0; ii < outsize; ii++){
-            error[ii] = (out[ii] - outputs[ii]) * factor;
-        }
+	/**
+	 * Assumes that the layer has already been evaluated.
+	 * @param error
+	 */
+	public float[] backpropagate(float[] error){
 
 	    // apply the gradient to the error
 	    for (int ii = 0; ii < outsize; ii++){
@@ -70,8 +69,9 @@ public class Layer {
 	    }
 
 
+		// zero the backprop
         for (int jj = 0; jj < insize; jj++){
-            back[jj] = 0;
+            Arrays.fill(back, 0);
         }
 
         // calc deltas
@@ -89,6 +89,7 @@ public class Layer {
             }
         }
 
+		return back;
     }
 
 
@@ -101,9 +102,9 @@ public class Layer {
 
         for (int ii = 0; ii < 20; ii++){
             for (int jj = 0; jj < in.length; jj++) {
-                l.backpropagate(in[jj], out[jj], 0.1f);
+//                l.backpropagate(in[jj], out[jj], 0.1f);
             }
-            System.out.println(Arrays.toString(l.error));
+//            System.out.println(Arrays.toString(l.error));
             System.out.println(Arrays.toString(l.outputs));
 	        System.out.println(Arrays.toString(l.back));
         }
