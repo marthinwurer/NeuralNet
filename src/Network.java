@@ -71,13 +71,17 @@ public class Network {
 		return outputs;
 	}
 
-	public void train(float[] inputs, float[] expected, float weight){
+	public void train(float[] inputs, float[] expected, float rate){
 		evaluate(inputs);
 
 		float[] back = new float[error.length];
 		for( int ii = 0; ii < expected.length; ++ii){
 			error[ii] = expected[ii] - outputs[ii];
-			back[ii] = error[ii] * weight;
+			back[ii] = error[ii] * rate;
+			if( Math.abs(error[ii]) > 5.0){
+				System.out.println(Arrays.toString(outputs) + ";" + Arrays.toString(error));
+//				error[ii] = Math.signum(error[ii]) * 5.0f;
+			}
 		}
 
 		for ( int ii = layers.size() - 1; ii > 0; --ii){
@@ -104,7 +108,7 @@ public class Network {
 		float[][] in = {{0.0f, 0.0f}, {0.0f, 1.0f},{1.0f, 0.0f},{1.0f, 1.0f}};
 		float[][] out = {{1.0f},{0.0f},{0.0f},{1.0f}};
 
-		int[] layers = {2, 4, 4, 1};
+		int[] layers = {2, 20, 20, 20, 20, 1};
 
 		Network net = new Network(layers, new LeakyReLU());
 
@@ -113,7 +117,7 @@ public class Network {
 		do{
 			total_error = 0;
 			for (int jj = 0; jj < in.length; jj++) {
-                net.train(in[jj], out[jj], 0.1f);
+                net.train(in[jj], out[jj], 0.0001f); // if nans start to happen, lower the learning rate.
                 total_error += net.mean_square_error();
 			}
             System.out.println(total_error);

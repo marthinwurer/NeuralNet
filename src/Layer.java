@@ -35,7 +35,7 @@ public class Layer {
 
         for (int ii = 0; ii < outsize; ii++){
             for (int jj = 0; jj < insize; jj++){
-                weights[ii][jj] = rand.nextFloat();
+                weights[ii][jj] = -1.0f + rand.nextFloat() * 2.0f;
             }
         }
     }
